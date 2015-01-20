@@ -19,7 +19,7 @@ selected_file.addEventListener('change', function(e) {
 }, false);
 
 function Model(file, ctx) {
-  this._verts = [];
+  this._verts = [6];
   this._faces = [];
   this.ctx = ctx;
   var lines = file.split("\n")
@@ -32,7 +32,7 @@ function Model(file, ctx) {
       this._verts.push(lineArr.splice(-3));
     if (lineArr[0] === "f") {
       f = [];
-      faceArr = lineArr.slice(-3)
+      faceArr = [lineArr[1], lineArr[2], lineArr[3]];
       for (var i = 0; i < 3; i++)
         f.push(faceArr[i].split('/')[0]);
       this._faces.push(f);
@@ -41,8 +41,9 @@ function Model(file, ctx) {
 }
 
 Model.prototype = {
-  draw: function (context) {
+  draw: function () {
     var iface, jface, face, v0, v1, x0, y0, x1, y1;
+    this.ctx.clearRect(0 , 0 , canvas.width, canvas.height);
 
     for (iface in this._faces) {
       face = this._faces[iface];
@@ -53,18 +54,23 @@ Model.prototype = {
         y0 = (parseFloat(v0[1]) + 1) * height / 2;
         x1 = (parseFloat(v1[0]) + 1) * width / 2;
         y1 = (parseFloat(v1[1]) + 1) * height / 2;
-        //console.log('drawLine', face, iface, jface, x0, y0);
-        this.line(x1, y1, x0, y0, context);
+        this.line(x0, y0, x1, y1, context);
       }
     }
   },
 
   line: function (x0, y0, x1, y1) {
-    ctx = this.ctx;
+    var ctx = this.ctx;
     ctx.beginPath();
     ctx.moveTo(x0, 1200 - y0);
     ctx.lineTo(x1, 1200 - y1);
     ctx.stroke();
+  },
+
+  triangle: function (face) {
+    var ctx = this.ctx
+      , v0 = [this._verts];
+    ctx.beginPath();
   }
 };
 
